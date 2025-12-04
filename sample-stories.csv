@@ -1,0 +1,16 @@
+id,description,epicDescription,projectDescription,dueDate,duration,timeSpent,status,priority
+STORY-001,Implement user authentication,User Management,Project Alpha,2025-12-10,40,25,In progress,high
+STORY-002,Create dashboard UI,Analytics Dashboard,Project Alpha,2025-12-08,24,5,To Do,high
+STORY-003,Setup database schema,Database Infrastructure,Project Alpha,2025-12-15,16,16,Closed,medium
+STORY-004,API endpoint for reports,Reporting System,Project Beta,2025-12-12,32,10,In progress,medium
+STORY-005,Email notification service,Notifications,Project Beta,2025-12-20,20,0,To Do,low
+STORY-006,User profile page,User Management,Project Alpha,2025-12-05,16,18,In test,high
+STORY-007,Data export functionality,Reporting System,Project Beta,2025-12-18,24,8,In progress,medium
+STORY-008,Mobile responsive design,UI/UX Improvements,Project Alpha,2025-12-25,40,15,To Do,low
+STORY-009,Performance optimization,Technical Debt,Project Alpha,2025-12-03,16,20,In deploy,high
+STORY-010,Search functionality,Core Features,Project Beta,2025-12-14,28,12,In progress,high
+STORY-011,File upload feature,Core Features,Project Beta,2025-12-22,20,5,To Do,medium
+STORY-012,Security audit,Security,Project Alpha,2025-12-30,32,0,To Do,high
+STORY-013,Documentation update,Documentation,Project Beta,2025-12-16,12,8,In progress,low
+STORY-014,Bug fixes - login,Bug Fixes,Project Alpha,2025-12-06,8,10,In test,high
+STORY-015,Integration tests,Testing,Project Beta,2025-12-28,24,6,To Do,medium
