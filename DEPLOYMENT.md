@@ -29,6 +29,8 @@ This guide covers deploying the Project Tracker application to AWS using Docker.
 
 ```bash
 ssh -i your-key.pem ec2-user@your-instance-ip
+o
+ssh -i "your-key.pem" ubuntu@our-instance-ip
 ```
 
 ### Step 3: Install Docker and Docker Compose
