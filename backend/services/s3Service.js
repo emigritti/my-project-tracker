@@ -1,13 +1,16 @@
-import AWS from 'aws-sdk';
+import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 // Configure AWS
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
 });
 
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
@@ -20,21 +23,38 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME;
  * @returns {Promise<object>} Upload result
  */
 export const uploadToS3 = async (fileBuffer, fileName, contentType) => {
-    const params = {
-        Bucket: BUCKET_NAME,
-        Key: fileName,
-        Body: fileBuffer,
-        ContentType: contentType
-    };
-
     try {
-        const result = await s3.upload(params).promise();
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: BUCKET_NAME,
+                Key: fileName,
+                Body: fileBuffer,
+                ContentType: contentType
+            }
+        });
+
+        const result = await upload.done();
         console.log('File uploaded successfully:', result.Location);
         return result;
     } catch (error) {
         console.error('Error uploading to S3:', error);
         throw error;
     }
+};
+
+/**
+ * Helper to convert stream to buffer
+ * @param {ReadableStream} stream 
+ * @returns {Promise<Buffer>}
+ */
+const streamToBuffer = (stream) => {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    });
 };
 
 /**
@@ -49,8 +69,9 @@ export const downloadFromS3 = async (fileName) => {
     };
 
     try {
-        const result = await s3.getObject(params).promise();
-        return result.Body;
+        const command = new GetObjectCommand(params);
+        const result = await s3Client.send(command);
+        return await streamToBuffer(result.Body);
     } catch (error) {
         console.error('Error downloading from S3:', error);
         throw error;
@@ -69,7 +90,8 @@ export const getLatestFile = async (prefix = 'stories') => {
     };
 
     try {
-        const result = await s3.listObjectsV2(params).promise();
+        const command = new ListObjectsV2Command(params);
+        const result = await s3Client.send(command);
 
         if (!result.Contents || result.Contents.length === 0) {
             throw new Error('No files found in S3 bucket');
@@ -97,7 +119,8 @@ export const listFiles = async () => {
     };
 
     try {
-        const result = await s3.listObjectsV2(params).promise();
+        const command = new ListObjectsV2Command(params);
+        const result = await s3Client.send(command);
         return result.Contents || [];
     } catch (error) {
         console.error('Error listing files from S3:', error);
